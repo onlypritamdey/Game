@@ -1,0 +1,49 @@
+/* General body styling */
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent scrolling */
+  background-color: black; /* Game background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  display: block;
+  position: absolute;
+}
+
+/* Joystick containers */
+#joystick-move-container,
+#joystick-fire-container {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  touch-action: none;
+}
+
+#joystick-move-container {
+  bottom: 10%;
+  left: 5%;
+}
+
+#joystick-fire-container {
+  bottom: 10%;
+  right: 5%;
+}
+
+/* Joysticks */
+#joystick-move,
+#joystick-fire {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
