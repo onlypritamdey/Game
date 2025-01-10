@@ -1,51 +1,62 @@
+// script.js
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Set up player and game variables
+// Set canvas dimensions to fullscreen
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Player setup
 const player = {
-  x: 0,
-  y: 0,
+  x: canvas.width / 2,
+  y: canvas.height / 2,
   size: 40,
   speed: 3,
   dx: 0,
   dy: 0,
 };
 
+// Bullets
 const bullets = [];
-const enemies = [];
-let isGameRunning = false;
 
-// Joystick variables
+// Enemies
+const enemies = [];
+
+// Game states
+let isGameRunning = false;
 let moveJoystickActive = false;
 let fireJoystickActive = false;
 let moveJoystickX = 0;
 let moveJoystickY = 0;
 let fireAngle = 0;
 
-// DOM Elements
+// DOM elements
 const moveJoystick = document.getElementById("joystick-move");
 const moveJoystickContainer = document.getElementById("joystick-move-container");
 const fireJoystick = document.getElementById("joystick-fire");
 const fireJoystickContainer = document.getElementById("joystick-fire-container");
 
-// Resize canvas to fit screen
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+// Add a start button dynamically
+const startButton = document.createElement("button");
+startButton.textContent = "Start Game";
+startButton.style.position = "absolute";
+startButton.style.top = "50%";
+startButton.style.left = "50%";
+startButton.style.transform = "translate(-50%, -50%)";
+startButton.style.padding = "10px 20px";
+startButton.style.fontSize = "20px";
+startButton.style.cursor = "pointer";
+document.body.appendChild(startButton);
 
-  if (window.innerWidth < window.innerHeight) {
-    alert("Please rotate your device to landscape mode for the best experience.");
-  }
-}
-
-// Start game
+// Start game function
 function startGame() {
   isGameRunning = true;
+  startButton.style.display = "none";
   resetGame();
   update();
 }
 
-// Reset game variables
+// Restart game function
 function resetGame() {
   player.x = canvas.width / 2;
   player.y = canvas.height / 2;
@@ -53,10 +64,59 @@ function resetGame() {
   enemies.length = 0;
 }
 
-// Spawn enemies
+// Movement joystick
+moveJoystickContainer.addEventListener("touchstart", () => {
+  if (!isGameRunning) return;
+  moveJoystickActive = true;
+});
+
+moveJoystickContainer.addEventListener("touchmove", (e) => {
+  if (!isGameRunning || !moveJoystickActive) return;
+  const touch = e.touches[0];
+  const rect = moveJoystickContainer.getBoundingClientRect();
+  const offsetX = touch.clientX - rect.left - rect.width / 2;
+  const offsetY = touch.clientY - rect.top - rect.height / 2;
+
+  const angle = Math.atan2(offsetY, offsetX);
+  moveJoystickX = Math.cos(angle) * player.speed;
+  moveJoystickY = Math.sin(angle) * player.speed;
+
+  moveJoystick.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+});
+
+moveJoystickContainer.addEventListener("touchend", () => {
+  moveJoystickActive = false;
+  moveJoystickX = 0;
+  moveJoystickY = 0;
+  moveJoystick.style.transform = "translate(0px, 0px)";
+});
+
+// Fire joystick
+fireJoystickContainer.addEventListener("touchstart", () => {
+  if (!isGameRunning) return;
+  fireJoystickActive = true;
+});
+
+fireJoystickContainer.addEventListener("touchmove", (e) => {
+  if (!isGameRunning || !fireJoystickActive) return;
+  const touch = e.touches[0];
+  const rect = fireJoystickContainer.getBoundingClientRect();
+  const offsetX = touch.clientX - rect.left - rect.width / 2;
+  const offsetY = touch.clientY - rect.top - rect.height / 2;
+
+  fireAngle = Math.atan2(offsetY, offsetX);
+
+  fireJoystick.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+});
+
+fireJoystickContainer.addEventListener("touchend", () => {
+  fireJoystickActive = false;
+  fireJoystick.style.transform = "translate(0px, 0px)";
+});
+
+// Spawn enemies randomly
 function spawnEnemy() {
   if (!isGameRunning) return;
-
   const size = Math.random() * 30 + 20;
   const side = Math.floor(Math.random() * 4);
 
@@ -78,10 +138,10 @@ function spawnEnemy() {
   enemies.push({ x, y, size, speed: Math.random() * 2 + 1 });
 }
 
-// Spawn enemies periodically
+// Spawn enemies every 2 seconds
 setInterval(spawnEnemy, 2000);
 
-// Update the game loop
+// Game loop
 function update() {
   if (!isGameRunning) return;
 
@@ -91,9 +151,9 @@ function update() {
   player.x += moveJoystickX;
   player.y += moveJoystickY;
 
-  // Keep player within canvas bounds
-  player.x = Math.max(player.size / 2, Math.min(canvas.width - player.size / 2, player.x));
-  player.y = Math.max(player.size / 2, Math.min(canvas.height - player.size / 2, player.y));
+  // Prevent player from moving off-screen
+  player.x = Math.max(0, Math.min(canvas.width, player.x));
+  player.y = Math.max(0, Math.min(canvas.height, player.y));
 
   // Draw player
   ctx.fillStyle = "blue";
@@ -139,8 +199,23 @@ function update() {
       player.size / 2 + enemy.size / 2
     ) {
       isGameRunning = false;
-      alert("Game Over! Refresh the page to restart.");
+      alert("Game Over! Click OK to restart.");
+      startButton.textContent = "Restart Game";
+      startButton.style.display = "block";
     }
+
+    // Check collision with bullets
+    bullets.forEach((bullet, bulletIndex) => {
+      if (
+        bullet.x > enemy.x - enemy.size / 2 &&
+        bullet.x < enemy.x + enemy.size / 2 &&
+        bullet.y > enemy.y - enemy.size / 2 &&
+        bullet.y < enemy.y + enemy.size / 2
+      ) {
+        enemies.splice(index, 1);
+        bullets.splice(bulletIndex, 1);
+      }
+    });
 
     ctx.fillStyle = "green";
     ctx.beginPath();
@@ -151,7 +226,5 @@ function update() {
   requestAnimationFrame(update);
 }
 
-// Resize canvas and start game
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
-startGame();
+// Attach the start button event listener
+startButton.addEventListener("click", startGame);
