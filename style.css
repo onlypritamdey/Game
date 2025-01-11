@@ -1,57 +1,82 @@
-html, body {
+/* Global reset */
+* {
     margin: 0;
     padding: 0;
-    height: 100%;
-    width: 100%;
-    background-color: #111;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    box-sizing: border-box;
 }
 
-.game-start-screen {
+/* Full screen container */
+body, html {
     height: 100%;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    background-color: #2e2e2e;
+}
+
+/* Ensuring horizontal orientation */
+@media screen and (orientation: portrait) {
+    body {
+        transform: rotate(90deg);
+        transform-origin: center center;
+        width: 100vh;
+        height: 100vw;
+    }
+}
+
+/* Game container */
+.game-container {
     text-align: center;
+    color: white;
 }
 
-.title {
-    font-size: 4em;
-    color: #fff;
-    margin-bottom: 50px;
-    font-weight: bold;
+.game-title {
+    font-size: 2em;
+    margin-bottom: 30px;
 }
 
-button, .start-button, .settings-button, .multiplayer-button, .instructions-button {
-    padding: 15px 30px;
-    background-color: #ff8c00;
-    border-radius: 10px;
-    cursor: pointer;
+.play-btn {
     font-size: 1.5em;
+    padding: 15px 30px;
+    background-color: #ff5a00;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
     transition: background-color 0.3s ease;
 }
 
-button:hover, .start-button:hover, .settings-button:hover, .multiplayer-button:hover, .instructions-button:hover {
-    background-color: #ffb84d;
+.play-btn:hover {
+    background-color: #e04d00;
 }
 
-.settings-button {
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    color: #333;
+}
+
+.close-btn {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: transparent;
-    border: none;
-    color: #fff;
-    font-size: 1.5em;
-}
-
-.multiplayer-button, .instructions-button {
-    font-size: 1.1em;
+    top: 10px;
+    right: 10px;
+    font-size: 25px;
+    color: #333;
+    cursor: pointer;
 }
