@@ -1,49 +1,57 @@
-/* General body styling */
-body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* Prevent scrolling */
-  background-color: black; /* Game background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
-canvas {
-  display: block;
-  position: absolute;
+.game-start-screen {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
 }
 
-/* Joystick containers */
-#joystick-move-container,
-#joystick-fire-container {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  touch-action: none;
+.title {
+    font-size: 4em;
+    color: #fff;
+    margin-bottom: 50px;
+    font-weight: bold;
 }
 
-#joystick-move-container {
-  bottom: 10%;
-  left: 5%;
+button, .start-button, .settings-button, .multiplayer-button, .instructions-button {
+    padding: 15px 30px;
+    background-color: #ff8c00;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.5em;
+    transition: background-color 0.3s ease;
 }
 
-#joystick-fire-container {
-  bottom: 10%;
-  right: 5%;
+button:hover, .start-button:hover, .settings-button:hover, .multiplayer-button:hover, .instructions-button:hover {
+    background-color: #ffb84d;
 }
 
-/* Joysticks */
-#joystick-move,
-#joystick-fire {
-  width: 50px;
-  height: 50px;
-  background: white;
-  border-radius: 50%;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+.settings-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
+}
+
+.multiplayer-button, .instructions-button {
+    font-size: 1.1em;
 }
