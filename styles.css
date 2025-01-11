@@ -12,10 +12,6 @@ html, body {
   overflow: hidden;
   background-color: #1a1a1a;
   font-family: Arial, sans-serif;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 
 /* Start Screen */
@@ -29,6 +25,7 @@ html, body {
   background: linear-gradient(135deg, #004e92, #000428);
   color: white;
   text-align: center;
+  position: relative;
 }
 
 h1 {
@@ -55,4 +52,22 @@ button:hover {
 
 button:active {
   transform: scale(0.95);
+}
+
+/* Orientation Warning */
+#orientation-warning {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 999;
 }
