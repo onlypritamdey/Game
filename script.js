@@ -1,7 +1,10 @@
-// Enable Fullscreen Mode on Start
-const startButton = document.getElementById("start-button");
+// Buttons
+const playButton = document.getElementById("play-button");
+const settingsButton = document.getElementById("settings-button");
+const exitButton = document.getElementById("exit-button");
 
-startButton.addEventListener("click", () => {
+// Fullscreen Handler
+function enableFullscreen() {
   const element = document.documentElement;
 
   if (element.requestFullscreen) {
@@ -11,12 +14,20 @@ startButton.addEventListener("click", () => {
   } else if (element.msRequestFullscreen) {
     element.msRequestFullscreen(); // IE11
   }
+}
 
-  // Proceed to the game
-  startGame();
+// Play Button
+playButton.addEventListener("click", () => {
+  enableFullscreen();
+  alert("Starting the Game... (Add navigation to the game screen here)");
 });
 
-function startGame() {
-  // Replace the start screen with the game
-  document.getElementById("start-screen").innerHTML = "<h1>Loading Game...</h1>";
-}
+// Settings Button
+settingsButton.addEventListener("click", () => {
+  alert("Open Settings... (Add your settings screen logic here)");
+});
+
+// Exit Button
+exitButton.addEventListener("click", () => {
+  alert("Exiting the Game... (Add your exit logic here)");
+});
