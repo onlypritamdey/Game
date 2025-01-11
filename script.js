@@ -1,4 +1,5 @@
 const startButton = document.getElementById("start-button");
+const orientationWarning = document.getElementById("orientation-warning");
 
 // Enable Full-Screen Mode
 startButton.addEventListener("click", () => {
@@ -12,11 +13,28 @@ startButton.addEventListener("click", () => {
     element.msRequestFullscreen(); // IE11
   }
 
-  // Transition to game
+  // Start the game
   startGame();
 });
 
+// Check Orientation
+function checkOrientation() {
+  if (window.innerWidth < window.innerHeight) {
+    // Show warning for portrait mode
+    orientationWarning.style.display = "flex";
+  } else {
+    // Hide warning for landscape mode
+    orientationWarning.style.display = "none";
+  }
+}
+
+// Monitor orientation changes
+window.addEventListener("resize", checkOrientation);
+window.addEventListener("orientationchange", checkOrientation);
+
+// Initial orientation check
+checkOrientation();
+
 function startGame() {
-  // Replace the start screen with the game screen
-  document.getElementById("start-screen").innerHTML = "<h1>Game is Starting...</h1>";
+  document.getElementById("start-screen").innerHTML = "<h1>Game Loading...</h1>";
 }
