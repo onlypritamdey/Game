@@ -1,25 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battle Shooter</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Game Start Screen</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-container">
-        <h1 class="game-title">Battle Shooter</h1>
-        <button class="play-btn" onclick="startGame()">Play</button>
-    </div>
-
-    <!-- Custom Modal for pop-ups -->
-    <div id="gameModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <p id="modal-message">Game Starting!</p>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+  <div id="start-screen">
+    <h1>My Game</h1>
+    <button id="start-button">Start Game</button>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
