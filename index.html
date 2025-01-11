@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>2D Shooting Game</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" href="favicon.ico">
+    <title>Battle Shooter</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <canvas id="gameCanvas"></canvas>
-  
-  <!-- Joysticks -->
-  <div id="joystick-move-container">
-    <div id="joystick-move"></div>
-  </div>
-  <div id="joystick-fire-container">
-    <div id="joystick-fire"></div>
-  </div>
-  
-  <script src="script.js"></script>
+    <div class="game-start-screen">
+        <div class="title">Battle Shooter</div>
+        <div class="start-button" onclick="startGame()">Start</div>
+        <div class="settings-button" onclick="openSettings()">⚙️</div>
+        <div class="multiplayer-button" onclick="openMultiplayer()">Multiplayer</div>
+        <div class="instructions-button" onclick="openInstructions()">How to Play</div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
