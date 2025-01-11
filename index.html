@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
-    <link rel="icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battle Shooter</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-start-screen">
-        <div class="title">Battle Shooter</div>
-        <div class="start-button" onclick="startGame()">Start</div>
-        <div class="settings-button" onclick="openSettings()">⚙️</div>
-        <div class="multiplayer-button" onclick="openMultiplayer()">Multiplayer</div>
-        <div class="instructions-button" onclick="openInstructions()">How to Play</div>
+    <div class="game-container">
+        <h1 class="game-title">Battle Shooter</h1>
+        <button class="play-btn" onclick="startGame()">Play</button>
+    </div>
+
+    <!-- Custom Modal for pop-ups -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <p id="modal-message">Game Starting!</p>
+        </div>
     </div>
 
     <script src="script.js"></script>
