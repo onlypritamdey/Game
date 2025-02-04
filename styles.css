@@ -1,73 +1,65 @@
-/* Reset */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
-/* Full-Screen Styling */
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: #1a1a1a;
-  font-family: Arial, sans-serif;
+canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
 }
 
-/* Start Screen */
-#start-screen {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #004e92, #000428);
-  color: white;
-  text-align: center;
-  position: relative;
+/* Joystick (Left Side) */
+#joystick-container {
+    position: absolute;
+    bottom: 10%;
+    left: 5%;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    touch-action: none;
 }
 
-h1 {
-  font-size: 3rem;
-  margin-bottom: 20px;
+#joystick {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    left: 25px;
+    top: 25px;
+    touch-action: none;
 }
 
-button {
-  padding: 15px 30px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: white;
-  background-color: #007BFF;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+/* Look-Around Touch Area (Right Side) */
+#look-area {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    right: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0);
+    touch-action: none;
 }
 
-button:hover {
-  background-color: #0056b3;
-  transform: scale(1.1);
-}
-
-button:active {
-  transform: scale(0.95);
-}
-
-/* Orientation Warning */
-#orientation-warning {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.9);
-  color: white;
-  font-size: 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  z-index: 999;
+/* Landscape Mode Adjustments */
+@media screen and (orientation: landscape) {
+    #joystick-container {
+        bottom: 5%;
+        left: 3%;
+        width: 120px;
+        height: 120px;
+    }
+    #joystick {
+        width: 60px;
+        height: 60px;
+        left: 30px;
+        top: 30px;
+    }
+    #look-area {
+        width: 50%;
+        height: 100%;
+    }
 }
