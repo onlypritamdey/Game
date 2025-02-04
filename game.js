@@ -1,5 +1,4 @@
 import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
-import { Player } from './player.js';
 
 // Setup scene, camera, and renderer
 const scene = new THREE.Scene();
@@ -61,8 +60,111 @@ crates[2].position.set(-7, 1, 7);
 
 crates.forEach(crate => scene.add(crate));
 
-// Initialize Player
-const player = new Player(camera, walls, crates);
+// Camera positioning
+camera.position.set(0, 1.6, 0);
+
+// Movement & Look variables
+let moveX = 0, moveZ = 0;
+let yaw = 0, pitch = 0;
+const sensitivity = 0.005;
+const speed = 0.1;
+
+// ** Collision Detection Function **
+function checkCollision(newPosition) {
+    const cameraBox = new THREE.Box3().setFromCenterAndSize(newPosition, new THREE.Vector3(0.5, 1.8, 0.5)); // camera bounds
+    for (let wall of walls) {
+        const wallBox = new THREE.Box3().setFromObject(wall);
+        if (cameraBox.intersectsBox(wallBox)) {
+            return true; // Collision detected
+        }
+    }
+    for (let crate of crates) {
+        const crateBox = new THREE.Box3().setFromObject(crate);
+        if (cameraBox.intersectsBox(crateBox)) {
+            return true; // Collision detected
+        }
+    }
+    return false; // No collision
+}
+
+// ** Joystick Setup **
+const joystickContainer = document.getElementById("joystick-container");
+const joystick = document.getElementById("joystick");
+let joystickActive = false, joystickStartX = 0, joystickStartY = 0;
+
+joystickContainer.addEventListener("touchstart", (event) => {
+    for (let touch of event.touches) {
+        if (touch.target === joystick || joystick.contains(touch.target)) {
+            joystickActive = true;
+            joystickStartX = touch.clientX;
+            joystickStartY = touch.clientY;
+        }
+    }
+});
+
+joystickContainer.addEventListener("touchmove", (event) => {
+    if (!joystickActive) return;
+
+    for (let touch of event.touches) {
+        if (touch.target === joystick || joystick.contains(touch.target)) {
+            let dx = touch.clientX - joystickStartX;
+            let dy = touch.clientY - joystickStartY;
+
+            moveX = dx / 50;
+            moveZ = dy / 50;
+
+            joystick.style.transform = `translate(${dx * 0.5}px, ${dy * 0.5}px)`;
+        }
+    }
+});
+
+joystickContainer.addEventListener("touchend", (event) => {
+    if (event.touches.length === 0) {
+        joystickActive = false;
+        moveX = 0;
+        moveZ = 0;
+        joystick.style.transform = "translate(0px, 0px)";
+    }
+});
+
+// ** Look Area Setup **
+const lookArea = document.getElementById('look-area');
+let lookActive = false, lookStartX = 0, lookStartY = 0;
+
+lookArea.addEventListener("touchstart", (event) => {
+    for (let touch of event.touches) {
+        if (touch.target === lookArea) {
+            lookActive = true;
+            lookStartX = touch.clientX;
+            lookStartY = touch.clientY;
+        }
+    }
+});
+
+lookArea.addEventListener("touchmove", (event) => {
+    if (!lookActive) return;
+
+    for (let touch of event.touches) {
+        if (touch.target === lookArea) {
+            let dx = touch.clientX - lookStartX;
+            let dy = touch.clientY - lookStartY;
+
+            yaw -= dx * sensitivity;
+            pitch -= dy * sensitivity;
+
+            pitch = Math.max(-Math.PI / 4, Math.min(Math.PI / 4, pitch));
+
+            lookStartX = touch.clientX;
+            lookStartY = touch.clientY;
+        }
+    }
+});
+
+lookArea.addEventListener("touchend", (event) => {
+    if (event.touches.length === 0) {
+        lookActive = false;
+    }
+});
 
 // ** Adjust Orientation & Aspect Ratio on Screen Rotate **
 function adjustOrientation() {
@@ -76,14 +178,39 @@ function adjustOrientation() {
 window.addEventListener("resize", adjustOrientation);
 adjustOrientation();
 
-// ** Game Loop with Player Update **
+// ** Game Loop with Collision Detection **
 function animate() {
     requestAnimationFrame(animate);
 
-    // Update player movement and look
-    player.update();
+    // Get the current position of the camera
+    let newPosition = camera.position.clone();
 
-    // Render the scene
+    // Player movement direction
+    let direction = new THREE.Vector3();
+    camera.getWorldDirection(direction);
+    direction.y = 0; // Keep the movement on the horizontal plane
+
+    let right = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0)).normalize();
+
+    // Calculate the new position based on movement input
+    let moveDirection = new THREE.Vector3();
+    moveDirection.addScaledVector(direction, -moveZ * speed);
+    moveDirection.addScaledVector(right, moveX * speed);
+
+    // Update the new position
+    newPosition.add(moveDirection);
+
+    // Check if the new position collides with any walls or crates
+    if (!checkCollision(newPosition)) {
+        // Apply the movement if no collision
+        camera.position.add(moveDirection);
+    }
+
+    // Apply camera rotation
+    camera.rotation.order = "YXZ";
+    camera.rotation.y = yaw;
+    camera.rotation.x = pitch;
+
     renderer.render(scene, camera);
 }
 
