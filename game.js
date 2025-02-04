@@ -24,7 +24,7 @@ const ground = new THREE.Mesh(
 ground.rotation.x = -Math.PI / 2;
 scene.add(ground);
 
-// Walls
+// Walls and Crates Setup (Using previous code)
 const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x444444 });
 const wallGeometry = new THREE.BoxGeometry(10, 3, 1);
 
@@ -44,7 +44,6 @@ walls[3].position.set(10, 1.5, 0);
 
 walls.forEach(wall => scene.add(wall));
 
-// Crates
 const crateGeometry = new THREE.BoxGeometry(2, 2, 2);
 const crateMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
 
@@ -60,6 +59,15 @@ crates[2].position.set(-7, 1, 7);
 
 crates.forEach(crate => scene.add(crate));
 
+// ** Gun Setup **
+const gunGeometry = new THREE.BoxGeometry(0.5, 0.2, 1.5); // Simple box as gun
+const gunMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+const gun = new THREE.Mesh(gunGeometry, gunMaterial);
+
+// Position the gun in front of the camera
+gun.position.set(0, -0.5, -2);
+camera.add(gun);  // Add gun as a child of the camera
+
 // Camera positioning
 camera.position.set(0, 1.6, 0);
 
@@ -68,24 +76,6 @@ let moveX = 0, moveZ = 0;
 let yaw = 0, pitch = 0;
 const sensitivity = 0.005;
 const speed = 0.1;
-
-// ** Collision Detection Function **
-function checkCollision(newPosition) {
-    const cameraBox = new THREE.Box3().setFromCenterAndSize(newPosition, new THREE.Vector3(0.5, 1.8, 0.5)); // camera bounds
-    for (let wall of walls) {
-        const wallBox = new THREE.Box3().setFromObject(wall);
-        if (cameraBox.intersectsBox(wallBox)) {
-            return true; // Collision detected
-        }
-    }
-    for (let crate of crates) {
-        const crateBox = new THREE.Box3().setFromObject(crate);
-        if (cameraBox.intersectsBox(crateBox)) {
-            return true; // Collision detected
-        }
-    }
-    return false; // No collision
-}
 
 // ** Joystick Setup **
 const joystickContainer = document.getElementById("joystick-container");
@@ -166,6 +156,52 @@ lookArea.addEventListener("touchend", (event) => {
     }
 });
 
+// ** Gun Fire (Simple Raycast)**
+const bullets = [];
+
+function fireBullet() {
+    const bulletGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+    const bulletMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const bullet = new THREE.Mesh(bulletGeometry, bulletMaterial);
+
+    // Position bullet at gun muzzle
+    bullet.position.set(gun.position.x, gun.position.y, gun.position.z);
+    scene.add(bullet);
+    
+    // Direction of the bullet
+    const direction = new THREE.Vector3();
+    camera.getWorldDirection(direction);
+
+    // Velocity and movement
+    const velocity = direction.multiplyScalar(0.5);  // Speed of bullet
+    bullet.userData = { velocity: velocity };  // Store velocity in userData for updates
+
+    bullets.push(bullet);
+}
+
+// ** Joystick Setup for Fire (right button)**
+document.addEventListener('touchstart', (event) => {
+    // Detect the firing action (right side area tap)
+    if (event.touches.length > 0 && event.touches[0].clientX > window.innerWidth / 2) {
+        fireBullet();
+    }
+});
+
+// ** Bullet Update**
+function updateBullets() {
+    for (let i = 0; i < bullets.length; i++) {
+        const bullet = bullets[i];
+        bullet.position.add(bullet.userData.velocity);
+        
+        // Simple collision check (could be expanded)
+        if (bullet.position.length() > 50) {
+            scene.remove(bullet);  // Remove bullet after it moves out of range
+            bullets.splice(i, 1);
+            i--;
+        }
+    }
+}
+
 // ** Adjust Orientation & Aspect Ratio on Screen Rotate **
 function adjustOrientation() {
     const aspect = window.innerWidth / window.innerHeight;
@@ -178,31 +214,23 @@ function adjustOrientation() {
 window.addEventListener("resize", adjustOrientation);
 adjustOrientation();
 
-// ** Game Loop with Collision Detection **
+// ** Game Loop with Collision Detection and Bullet Update**
 function animate() {
     requestAnimationFrame(animate);
 
-    // Get the current position of the camera
-    let newPosition = camera.position.clone();
-
-    // Player movement direction
+    // Player movement and camera rotation logic (same as before)
     let direction = new THREE.Vector3();
     camera.getWorldDirection(direction);
-    direction.y = 0; // Keep the movement on the horizontal plane
+    direction.y = 0;
 
     let right = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0)).normalize();
-
-    // Calculate the new position based on movement input
     let moveDirection = new THREE.Vector3();
     moveDirection.addScaledVector(direction, -moveZ * speed);
     moveDirection.addScaledVector(right, moveX * speed);
 
-    // Update the new position
-    newPosition.add(moveDirection);
-
-    // Check if the new position collides with any walls or crates
+    // Update position
+    let newPosition = camera.position.clone().add(moveDirection);
     if (!checkCollision(newPosition)) {
-        // Apply the movement if no collision
         camera.position.add(moveDirection);
     }
 
@@ -211,6 +239,10 @@ function animate() {
     camera.rotation.y = yaw;
     camera.rotation.x = pitch;
 
+    // Bullet update
+    updateBullets();
+
+    // Render scene
     renderer.render(scene, camera);
 }
 
